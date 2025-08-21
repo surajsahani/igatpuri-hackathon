@@ -19,14 +19,23 @@ const shapes = [
 export default function HangingShapes() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [prompt, setPrompt] = useState("");
+  const [generatedImage, setGeneratedImage] = useState(null);
+  const [feedback, setFeedback] = useState("");
 
   const handleShapeClick = (image) => {
     setSelectedImage(image);
   };
 
   const handleGenerateClick = () => {
-    // Placeholder for image generation logic
-    console.log("Generate image with prompt:", prompt);
+    if (!prompt) return;
+    const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(
+      prompt
+    )}`;
+    setGeneratedImage(imageUrl);
+    setFeedback(prompt);
+
+    const utterance = new SpeechSynthesisUtterance(prompt);
+    window.speechSynthesis.speak(utterance);
   };
 
   return (
@@ -75,10 +84,18 @@ export default function HangingShapes() {
         </div>
         <div className="right-panel">
           <div className="generated-image-placeholder">
-            <p>Generated image will appear here</p>
+            {generatedImage ? (
+              <img src={generatedImage} alt="Generated" />
+            ) : (
+              <p>Generated image will appear here</p>
+            )}
           </div>
           <div className="feedback-placeholder">
-            <p>Matching feedback will appear here</p>
+            {feedback ? (
+              <p>{feedback}</p>
+            ) : (
+              <p>Matching feedback will appear here</p>
+            )}
           </div>
         </div>
       </div>
